@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useCart } from "@/context/CartContext";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate, Navigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   User, Package, Heart, MapPin, CreditCard, LogOut, Edit, Plus, Trash2, Star, ShoppingCart, Check, X, Truck, Clock, CheckCircle,
@@ -17,7 +17,18 @@ const ProfilePage = () => {
   const { items: wishlistItems, removeFromWishlist } = useWishlist();
   const { addToCart } = useCart();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<Tab>("overview");
+  const [searchParams] = useSearchParams();
+  const [tab, setTab] = useState<Tab>(() => {
+    const t = searchParams.get("tab");
+    return (t && ["overview", "edit", "orders", "wishlist", "addresses", "payments"].includes(t)) ? t as Tab : "overview";
+  });
+
+  useEffect(() => {
+    const t = searchParams.get("tab");
+    if (t && ["overview", "edit", "orders", "wishlist", "addresses", "payments"].includes(t)) {
+      setTab(t as Tab);
+    }
+  }, [searchParams]);
 
   if (!isAuthenticated || !user) return <Navigate to="/login" replace />;
 
