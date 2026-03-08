@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { ShoppingCart, Heart, Eye, Star } from "lucide-react";
 import { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
@@ -26,6 +27,8 @@ const badgeLabels: Record<string, string> = {
 
 const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
   const { addToCart } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const wishlisted = isInWishlist(product.id);
   const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
@@ -77,10 +80,20 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
                 <ShoppingCart className="h-4 w-4 text-foreground" />
               </button>
               <button
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (wishlisted) {
+                    removeFromWishlist(product.id);
+                    toast.success("Removed from wishlist");
+                  } else {
+                    addToWishlist(product);
+                    toast.success("Added to wishlist");
+                  }
+                }}
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-card shadow-elevated transition-transform hover:scale-110"
               >
-                <Heart className="h-4 w-4 text-foreground" />
+                <Heart className={`h-4 w-4 ${wishlisted ? "fill-accent text-accent" : "text-foreground"}`} />
               </button>
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-card shadow-elevated">
                 <Eye className="h-4 w-4 text-foreground" />

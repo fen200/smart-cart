@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, ShoppingCart, Heart, User, Menu, X } from "lucide-react";
+import { Search, ShoppingCart, Menu, X } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
+import UserDropdown from "@/components/UserDropdown";
+import WishlistSheet from "@/components/WishlistSheet";
 
 const Navbar = () => {
   const { totalItems } = useCart();
@@ -20,17 +22,13 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-xl">
       <div className="container mx-auto flex h-16 items-center justify-between gap-4 px-4">
-        {/* Logo */}
         <Link to="/" className="flex items-center gap-2 shrink-0">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent">
             <span className="text-sm font-bold text-accent-foreground">S</span>
           </div>
-          <span className="text-lg font-bold tracking-tight text-foreground hidden sm:block">
-            ShopSmart
-          </span>
+          <span className="text-lg font-bold tracking-tight text-foreground hidden sm:block">ShopSmart</span>
         </Link>
 
-        {/* Search */}
         <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-xl">
           <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -44,14 +42,9 @@ const Navbar = () => {
           </div>
         </form>
 
-        {/* Actions */}
         <div className="flex items-center gap-1">
-          <button className="relative flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
-            <Heart className="h-5 w-5" />
-          </button>
-          <button className="relative flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
-            <User className="h-5 w-5" />
-          </button>
+          <WishlistSheet />
+          <UserDropdown />
           <Link
             to="/cart"
             className="relative flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
@@ -76,7 +69,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile search */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
